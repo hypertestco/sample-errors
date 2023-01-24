@@ -41,18 +41,6 @@ class RidesQuery {
     await execSQLTxn(txnQueries);
   }
 
-  async saveSession(userId, session) {
-    const sqlQuery = `INSERT INTO sessions (user_id, session_id) VALUES (${userId}, '${session}') ON CONFLICT (user_id) 
-      DO UPDATE SET session_id = '${session}', updated_at = NOW()`;
-    await execSQLQuery(sqlQuery);
-  }
-
-  async verifySession(userId, session) {
-    const sqlQuery = `SELECT * FROM sessions WHERE user_id = ${userId} AND session_id = '${session}'`;
-    const sessionInst = await execSQLQuery(sqlQuery);
-    return !!sessionInst.length;
-  }
-
   async updateProfile(userId, reqData) {
     const sqlQuery = `INSERT INTO user_profile (user_id, account_number, ifsc, account_type, pan, employment_type, monthly_income) VALUES 
       (${userId}, '${reqData.accountNumber}', '${reqData.ifsc}', '${reqData.accountType}', '${reqData.pan}', '${reqData.employmentType}', '${reqData.monthlyIncome}')

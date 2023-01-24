@@ -7,23 +7,21 @@ const { validators, validationErrorHandler } = require('../middlewares/validator
 const {
   listAllBanks, findUser, registerUser, saveOtp, verifyOtp,
   updateProfile, getLatestLoan, createNewLoan, actionUpdateOnLoan, cancelLoan,
-  getLoanDetails, updateDocuments, getAllDocs, getProfileInfo, approveDocsAndLoan, rejectLoan,
-  saveSession, verifySession
+  getLoanDetails, updateDocuments, getAllDocs, getProfileInfo, approveDocsAndLoan, rejectLoan
 } = require('../model/stateful.model');
 
 const router = express.Router();
 
-const generateSession = async jwtData => new Promise(async (resolve, reject) => {
+const generateSession = async jwtData => new Promise((resolve, reject) => {
   jwt.sign(jwtData, process.env.JWT_SIGN_KEY,
     { expiresIn: '7d' },
-    async (err, token) => {
+    (err, token) => {
       if (err) return reject(err);
-      await saveSession(jwtData.id, token);
       return resolve(token);
     });
 });
 
-const verifySessionMiddleware = async (req, res, next) => {
+const verifySessionMiddleware = (req, res, next) => {
   if (!req.headers.authorization) {
     res.status(403).json({ success: false, msg: 'Authorization is missing from request headers.', data: {} });
     return next();
@@ -36,10 +34,6 @@ const verifySessionMiddleware = async (req, res, next) => {
       req._decoded = decoded;
       return decoded;
     });
-    const isValidToken = await verifySession(req._decoded.id, req.headers.authorization);
-    if (!isValidToken) {
-      return next(res.status(403).json({ success: false, msg: 'Authorization has been expired. Please do login again.', data: {} }));
-    }
     return next();
   } catch (err) {
     console.log(err);
@@ -69,7 +63,7 @@ const uploadDocsMiddleware = (req, res, next) => {
   });
 };
 
-router.get('/list-banks', async (req, res, next) => {
+router.get('/stateful/list-banks', async (req, res, next) => {
   try {
     const bankListFromDB = await listAllBanks();
     return res.status(200).json(bankListFromDB);
@@ -80,7 +74,7 @@ router.get('/list-banks', async (req, res, next) => {
   }
 });
 
-router.post('/register', validators.registerUser, validationErrorHandler, async (req, res, next) => {
+router.post('/stateful/register', validators.registerUser, validationErrorHandler, async (req, res, next) => {
   const reqData = req.body;
   try {
     const user = await findUser(reqData.mobile);
@@ -107,7 +101,7 @@ router.post('/register', validators.registerUser, validationErrorHandler, async 
   }
 });
 
-router.put('/send-otp', validators.checkMobile, validationErrorHandler, async (req, res, next) => {
+router.put('/stateful/send-otp', validators.checkMobile, validationErrorHandler, async (req, res, next) => {
   const { mobile } = req.body;
   try {
     const user = await findUser(mobile);
@@ -147,7 +141,7 @@ router.put('/send-otp', validators.checkMobile, validationErrorHandler, async (r
   }
 });
 
-router.put('/verify-otp', validators.verifyOTP, validationErrorHandler, async (req, res, next) => {
+router.put('/stateful/verify-otp', validators.verifyOTP, validationErrorHandler, async (req, res, next) => {
   const reqData = {
     mobile: req.body.mobile,
     otp: req.body.otp
@@ -177,7 +171,6 @@ router.put('/verify-otp', validators.verifyOTP, validationErrorHandler, async (r
     }
     await verifyOtp(reqData.mobile);
     const sessionId = await generateSession({ id: user.id, mobile: user.mobile });
-    console.log(sessionId);
     return res.status(200).json({
       success: true,
       msg: 'OTP verification successful.',
@@ -190,7 +183,7 @@ router.put('/verify-otp', validators.verifyOTP, validationErrorHandler, async (r
   }
 });
 
-router.post('/complete-profile', validators.profileUpdate, validationErrorHandler, verifySessionMiddleware, async (req, res, next) => {
+router.post('/stateful/complete-profile', validators.profileUpdate, validationErrorHandler, verifySessionMiddleware, async (req, res, next) => {
   const userId = req._decoded.id;
   const reqData = req.body;
   try {
@@ -207,7 +200,7 @@ router.post('/complete-profile', validators.profileUpdate, validationErrorHandle
   }
 });
 
-router.post('/apply-loan', validators.applyLoan, validationErrorHandler, verifySessionMiddleware, async (req, res, next) => {
+router.post('/stateful/apply-loan', validators.applyLoan, validationErrorHandler, verifySessionMiddleware, async (req, res, next) => {
   const userId = req._decoded.id;
   const reqData = req.body;
   try {
@@ -245,7 +238,7 @@ router.post('/apply-loan', validators.applyLoan, validationErrorHandler, verifyS
   }
 });
 
-router.post('/doc-upload', validators.documentUploadChecks, validationErrorHandler, uploadDocsMiddleware, verifySessionMiddleware, async (req, res, next) => {
+router.post('/stateful/doc-upload', validators.documentUploadChecks, validationErrorHandler, uploadDocsMiddleware, verifySessionMiddleware, async (req, res, next) => {
   const userId = req._decoded.id;
   const reqData = { ...req.query, ...req.file };
   try {
@@ -285,7 +278,7 @@ router.post('/doc-upload', validators.documentUploadChecks, validationErrorHandl
   }
 });
 
-router.put('/action-on-loan', validators.actionOnLoan, validationErrorHandler, verifySessionMiddleware, async (req, res, next) => {
+router.put('/stateful/action-on-loan', validators.actionOnLoan, validationErrorHandler, verifySessionMiddleware, async (req, res, next) => {
   const userId = req._decoded.id;
   const reqData = req.body;
   try {
@@ -332,7 +325,7 @@ router.put('/action-on-loan', validators.actionOnLoan, validationErrorHandler, v
 });
 
 // this will auto approve loan after approving docs on basis of monthly income.
-router.post('/approve-loan', async (req, res, next) => {
+router.post('/stateful/approve-loan', async (req, res, next) => {
   const { userId } = req.body;
   const { loanId } = req.body;
   try {
