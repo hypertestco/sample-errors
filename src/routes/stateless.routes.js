@@ -1,4 +1,5 @@
 const express = require('express');
+const xml = require('jsontoxml');
 
 const router = express.Router();
 
@@ -46,57 +47,65 @@ const dummyUsersList = [
 ];
 
 
-router.get('/stateless/content_type_example', (req, res) => res.status(200).json({
-  success: true,
-  msg: 'Content type example.',
-  data: dummyUsersList[4]
+router.get('/stateless/content_type_example', (req, res) => {
+  res.header('Content-Type', 'application/xml');
+  return res.status(200).send(xml({ success: true, msg: 'Content type example.', data: dummyUsersList[4] }));
+});
+
+
+router.get('/stateless/status_code_example', (req, res) => res.status(404).json({
+  success: false, msg: 'Status code example.', data: { error: 'User not found.' }
 }));
 
 
-router.get('/stateless/status_code_example', (req, res) => res.status(200).json({
-  success: true, msg: 'Status code example.', data: dummyUsersList[0]
-}));
-
-
-router.get('/stateless/header_added_example', (req, res) => res.status(200).json({
-  success: true, msg: 'Header added example.', data: dummyUsersList[0]
-}));
+router.get('/stateless/header_added_example', (req, res) => {
+  res.header('Access-Control-Request-Method', '*');
+  return res.status(200).json({ success: true, msg: 'Header added example.', data: dummyUsersList[0] });
+});
 
 
 router.get('/stateless/header_modified_example', (req, res) => {
-  res.header('Access-Control-Request-Method', 'GET');
+  res.header('Access-Control-Request-Method', '*');
   return res.status(200).json({ success: true, msg: 'Header modified example.', data: dummyUsersList[0] });
 });
 
 
-router.get('/stateless/header_removed_example', (req, res) => res.status(200).json({
-  success: true, msg: 'Header removed example.', data: dummyUsersList[0]
-}));
+router.get('/stateless/header_removed_example', (req, res) => {
+  res.header('Access-Control-Request-Method', 'GET');
+  return res.status(200).json({ success: true, msg: 'Header removed example.', data: dummyUsersList[0] });
+});
 
 
-router.get('/stateless/key_removed_example', (req, res) => res.status(200).json({
-  success: true, msg: 'Key removed example.', data: dummyUsersList[3]
-}));
+router.get('/stateless/key_removed_example', (req, res) => {
+  const { rating, ...userProps } = { ...dummyUsersList[3] };
+  return res.status(200).json({ success: true, msg: 'Key removed example.', data: userProps });
+});
 
 
-router.get('/stateless/key_added_example', (req, res) => res.status(200).json({
-  success: true, msg: 'Key added example.', data: dummyUsersList[1]
-}));
+router.get('/stateless/key_added_example', (req, res) => {
+  const modifiedUserObj = { ...dummyUsersList[1], phoneNumber: '212 555-1234' };
+  return res.status(200).json({ success: true, msg: 'Key added example.', data: modifiedUserObj });
+});
 
 
-router.get('/stateless/value_modified_example', (req, res) => res.status(200).json({
-  success: true, msg: 'Value modified example.', data: dummyUsersList[2]
-}));
+router.get('/stateless/value_modified_example', (req, res) => {
+  const modifiedUserObj = { ...dummyUsersList[2], credit: null, rating: 0 };
+  return res.status(200).json({ success: true, msg: 'Value modified example.', data: modifiedUserObj });
+});
 
 
-router.get('/stateless/array_value_modified_example', (req, res) => res.status(200).json({
-  success: true, msg: 'Array value modified example.', data: dummyUsersList
-}));
+router.get('/stateless/array_value_modified_example', (req, res) => {
+  const modifiedUsersList = dummyUsersList.map(usr => ({ ...usr, credit: null, rating: 0 }));
+  return res.status(200).json({ success: true, msg: 'Array value modified example.', data: modifiedUsersList });
+});
 
 
-router.get('/stateless/array_order_changed_example', (req, res) => res.status(200).json({
-  success: true, msg: 'Array order changed example.', data: dummyUsersList
-}));
+router.get('/stateless/array_order_changed_example', (req, res) => {
+  const modifiedUsersList = [...dummyUsersList];
+  const firstUser = modifiedUsersList.shift();
+  modifiedUsersList.push(firstUser);
+  return res.status(200).json({ success: true, msg: 'Array order changed example.', data: modifiedUsersList });
+});
 
 
 module.exports = router;
