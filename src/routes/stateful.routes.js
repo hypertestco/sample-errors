@@ -69,7 +69,7 @@ const uploadDocsMiddleware = (req, res, next) => {
   });
 };
 
-router.get('/stateful/list-banks', async (req, res, next) => {
+router.get('/list-banks', async (req, res, next) => {
   try {
     const bankListFromDB = await listAllBanks();
     return res.status(200).json(bankListFromDB);
@@ -80,7 +80,7 @@ router.get('/stateful/list-banks', async (req, res, next) => {
   }
 });
 
-router.post('/stateful/register', validators.registerUser, validationErrorHandler, async (req, res, next) => {
+router.post('/register', validators.registerUser, validationErrorHandler, async (req, res, next) => {
   const reqData = req.body;
   try {
     const user = await findUser(reqData.mobile);
@@ -107,7 +107,7 @@ router.post('/stateful/register', validators.registerUser, validationErrorHandle
   }
 });
 
-router.put('/stateful/send-otp', validators.checkMobile, validationErrorHandler, async (req, res, next) => {
+router.put('/send-otp', validators.checkMobile, validationErrorHandler, async (req, res, next) => {
   const { mobile } = req.body;
   try {
     const user = await findUser(mobile);
@@ -147,7 +147,7 @@ router.put('/stateful/send-otp', validators.checkMobile, validationErrorHandler,
   }
 });
 
-router.put('/stateful/verify-otp', validators.verifyOTP, validationErrorHandler, async (req, res, next) => {
+router.put('/verify-otp', validators.verifyOTP, validationErrorHandler, async (req, res, next) => {
   const reqData = {
     mobile: req.body.mobile,
     otp: req.body.otp
@@ -190,7 +190,7 @@ router.put('/stateful/verify-otp', validators.verifyOTP, validationErrorHandler,
   }
 });
 
-router.post('/stateful/complete-profile', validators.profileUpdate, validationErrorHandler, verifySessionMiddleware, async (req, res, next) => {
+router.post('/complete-profile', validators.profileUpdate, validationErrorHandler, verifySessionMiddleware, async (req, res, next) => {
   const userId = req._decoded.id;
   const reqData = req.body;
   try {
@@ -207,7 +207,7 @@ router.post('/stateful/complete-profile', validators.profileUpdate, validationEr
   }
 });
 
-router.post('/stateful/apply-loan', validators.applyLoan, validationErrorHandler, verifySessionMiddleware, async (req, res, next) => {
+router.post('/apply-loan', validators.applyLoan, validationErrorHandler, verifySessionMiddleware, async (req, res, next) => {
   const userId = req._decoded.id;
   const reqData = req.body;
   try {
@@ -245,7 +245,7 @@ router.post('/stateful/apply-loan', validators.applyLoan, validationErrorHandler
   }
 });
 
-router.post('/stateful/doc-upload', validators.documentUploadChecks, validationErrorHandler, uploadDocsMiddleware, verifySessionMiddleware, async (req, res, next) => {
+router.post('/doc-upload', validators.documentUploadChecks, validationErrorHandler, uploadDocsMiddleware, verifySessionMiddleware, async (req, res, next) => {
   const userId = req._decoded.id;
   const reqData = { ...req.query, ...req.file };
   try {
@@ -285,7 +285,7 @@ router.post('/stateful/doc-upload', validators.documentUploadChecks, validationE
   }
 });
 
-router.put('/stateful/action-on-loan', validators.actionOnLoan, validationErrorHandler, verifySessionMiddleware, async (req, res, next) => {
+router.put('/action-on-loan', validators.actionOnLoan, validationErrorHandler, verifySessionMiddleware, async (req, res, next) => {
   const userId = req._decoded.id;
   const reqData = req.body;
   try {
@@ -332,7 +332,7 @@ router.put('/stateful/action-on-loan', validators.actionOnLoan, validationErrorH
 });
 
 // this will auto approve loan after approving docs on basis of monthly income.
-router.post('/stateful/approve-loan', async (req, res, next) => {
+router.post('/approve-loan', async (req, res, next) => {
   const { userId } = req.body;
   const { loanId } = req.body;
   try {

@@ -7,6 +7,8 @@ require('dotenv-flow').config({
   path: path.join(__dirname, './')
 });
 const statefulRoutes = require('./src/routes/stateful.routes');
+const performanceRoutes = require('./src/routes/performance.routes');
+const statelessRoutes = require('./src/routes/stateless.routes');
 
 const app = express();
 const server = app.listen(process.env.PORT, () => {
@@ -22,7 +24,9 @@ app.use(bodyParser.urlencoded({ limit: '1mb', extended: true }));
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Router Initialization
-app.get('/app/v1/ping', (req, res) => res.status(200).json({ success: true, msg: 'Pong', data: {} }));
-app.use('/app/v1', statefulRoutes);
+app.get('/app/ping', (req, res) => res.status(200).json({ success: true, msg: 'Pong', data: {} }));
+app.use('/app/stateful', statefulRoutes);
+app.use('/app/performance', performanceRoutes);
+app.use('/app/stateless', statelessRoutes);
 
 module.exports = app;
