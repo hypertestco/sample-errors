@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: sample-errors
+  namespace: argocd
+spec:
+  generators:
+  - pullRequest:
+      github:
+        owner: neha-hypertest
+        repo: sample-errors
+        labels:
+        - preview
+      requeueAfterSeconds: 5
+  template:
+    metadata:
+      name: 'sample-errors-{{branch}}-{{number}}'
+    spec:
+      source:
+        repoURL: 'https://github.com/neha-hypertest/sample-errors'
+        targetRevision: '{{head_sha}}'
+        path: manifests
+      project: default
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: 'sample-errors-{{branch}}-{{number}}'

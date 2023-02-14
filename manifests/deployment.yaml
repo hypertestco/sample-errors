@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-errors-deployment
+spec:
+  selector:
+    matchLabels:
+      app: sample-errors
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sample-errors
+    spec:
+      containers:
+        - name: sample-errors
+          image: nehahypertest/sample-errors-test:51
+          ports:
+            - containerPort: 5000
+

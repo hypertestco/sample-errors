@@ -11,9 +11,9 @@ const performanceRoutes = require('./src/routes/performance.routes');
 const statelessRoutes = require('./src/routes/stateless.routes');
 
 const app = express();
-const server = app.listen(process.env.PORT, () => {
+const server = app.listen(5000, () => {
   console.info(`Server started on ${new Date()}`);
-  console.info(`server is running at http://${server.address().address}:${server.address().port}`);
+  console.info(`server is running at http://locahost:5000`);
 });
 app.use(express.json());
 
