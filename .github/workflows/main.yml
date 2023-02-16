@@ -1,0 +1,73 @@
+name: CI
+on:
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  HT_BASE_URL: '${{ secrets.HT_BASE_URL }}'
+  HT_COMMIT_HASH: '${{ github.event.pull_request.head.sha }}' ## required because checkout creates a detached commit with a different sha
+  IMAGE_NAME: sample-errors
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      # Login to dockerhub
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.head_ref }}-${{ github.run_number }}
+
+      # - name: Repository Dispatch
+      #   uses: peter-evans/repository-dispatch@v1
+      #   with:
+      #     token: ${{ secrets.PAT }}
+      #     repository: ${{ github.actor }}/argocd-manifests
+      #     event-type: new-image
+      #     client-payload: '{"name": "${{ github.run_number }}"}'
+      
+
+
+      - name: Update Image Version
+        id: imgupd
+        uses: mikefarah/yq@master
+        with:
+          cmd: |
+            yq eval '.metadata.name = "${{ github.head_ref }}-sample-errors-deployment' -i manifests/deployment.yaml
+            yq eval '.metadata.name = "${{ github.head_ref }}-sample-errors-service' -i manifests/servce.yaml
+            yq eval '.metadata.name = "${{ github.head_ref }}-sample-errors-ingress' -i manifests/ingress.yaml
+            yq eval '.spec.template.spec.containers[0].image = "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.head_ref }}-${{ github.run_number }}"' -i manifests/deployment.yaml
+            yq eval '.spec.rule[0].host=${{ github.head_ref }}-sample-errors.hypertest.co'
+      
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Apply image name changes for argocd
+          branch: ${{ github.head_ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      
+  # hypertest-start-test:
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   steps:
+  #   - name: download hypertest ci
+  #     run: wget -O ht-cli.tar.xz https://hypertest-binaries-1.s3.ap-south-1.amazonaws.com/ht-cli/ht-cli-latest.tar.xz && tar xvf ht-cli.tar.xz
+    
+  #   - name: hypertest-start-test
+  #     run: ./hypertest start-new-test 
