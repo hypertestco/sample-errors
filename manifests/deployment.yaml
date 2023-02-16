@@ -16,5 +16,5 @@ spec:
         - name: sample-errors
           image: nehahypertest/sample-errors-test:51
           ports:
-            - containerPort: 5000
+            - containerPort: 3000
 
