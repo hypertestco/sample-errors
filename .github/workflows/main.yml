@@ -66,8 +66,7 @@ jobs:
             PG_PORT_ARG: ${{ secrets.PG_PORT }}
             PG_DB_ARG: ${{ secrets.PG_DB }}
             JWT_SIGN_KEY_ARG: ${{ secrets.JWT_SIGN_KEY }}
-
-
+           
   deploy:  
     runs-on: ubuntu-latest
     needs: build

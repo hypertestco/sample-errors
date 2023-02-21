@@ -27,6 +27,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.get('/app/ping', (req, res) => res.status(200).json({ success: true, msg: 'Pong', data: {} }));
 app.use('/app', statefulRoutes);
 app.use('/app', performanceRoutes);
-app.use('/app/stateless', statelessRoutes);
+app.use('/app', statelessRoutes);
 
 module.exports = app;
