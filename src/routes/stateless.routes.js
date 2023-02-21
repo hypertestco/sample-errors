@@ -38,7 +38,7 @@ const dummyUsersList = [
   },
   {
     id: 90,
-    name: 'Elon Musk',
+    name: 'Elon',
     email: 'elon@tesla.com',
     rating: 4.1,
     credit: 91,
