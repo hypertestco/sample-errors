@@ -5,7 +5,7 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 router.get('/performance/standard', async (req, res) => {
   // Do not change standard route code block.
-  await sleep(100);
+  await sleep(1000);
   return res.status(200).json({
     success: true,
     msg: 'Standard route response.',
@@ -20,7 +20,7 @@ router.get('/performance/standard', async (req, res) => {
 
 router.get('/performance/delayed', async (req, res) => {
   // TODO: Increase time in timeout function when changing in your branch.
-  await sleep(1000);
+  await sleep(3000);
   return res.status(200).json({
     success: true,
     msg: 'Delayed route response.',
@@ -35,7 +35,7 @@ router.get('/performance/delayed', async (req, res) => {
 
 router.get('/performance/boosted', async (req, res) => {
   // TODO: Decrease time in timeout function when changing in your branch.
-  await sleep(3000);
+  await sleep(2000);
   return res.status(200).json({
     success: true,
     msg: 'Boosted route response.',
