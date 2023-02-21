@@ -1,7 +1,7 @@
 name: CI
 on:
   pull_request_target:
-    types: [assigned, opened, synchronize, reopened, edited]
+    types: [opened, synchronize, reopened, edited]
     branches:
       - main
 
@@ -11,10 +11,11 @@ on:
 env:
   HT_BASE_URL: '${{ secrets.HT_BASE_URL }}'
   HT_COMMIT_HASH: '${{ github.event.pull_request.head.sha }}' ## required because checkout creates a detached commit with a different sha
+  BRANCH_NAME: ${{ github.head_ref }}
   IMAGE_NAME: sample-errors
   IMAGE_TAG: ${{ github.head_ref }}-${{ github.event.pull_request.head.sha }}
-  DOCKERHUB_USERNAME: nehahypertest
-  DOCKERHUB_TOKEN: '${{ secrets.DOCKERHUB_TOKEN }}'
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
 
 jobs:
@@ -23,22 +24,22 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Make envfile
-        uses: SpicyPizza/create-envfile@v1.3
-        with: 
-          envkey_PG_HOST: ${{ secrets.PG_HOST }}
-          envkey_PG_USER: ${{ secrets.PG_USER }}
-          envkey_PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
-          envkey_PG_PORT: ${{ secrets.PG_PORT }}
-          envkey_PG_DB: ${{ secrets.PG_DB }}
-          envkey_PG_JWT_SIGN_KEY: ${{ secrets.JWT_SIGN_KEY }}
-          envkey_PORT: 4321
-          envkey_HOST: 0.0.0.0
+      # - name: Make envfile
+      #   uses: SpicyPizza/create-envfile@v1.3
+      #   with: 
+      #     envkey_PG_HOST: ${{ secrets.PG_HOST }}
+      #     envkey_PG_USER: ${{ secrets.PG_USER }}
+      #     envkey_PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+      #     envkey_PG_PORT: ${{ secrets.PG_PORT }}
+      #     envkey_PG_DB: ${{ secrets.PG_DB }}
+      #     envkey_PG_JWT_SIGN_KEY: ${{ secrets.JWT_SIGN_KEY }}
+      #     envkey_PORT: 4321
+      #     envkey_HOST: 0.0.0.0
 
-      - name: Checking envs
-        run: |
-          cat .env
-          printenv|sort
+      # - name: Checking envs
+      #   run: |
+      #     cat .env
+      #     printenv|sort
  
       # Login to dockerhub
       - name: Login to DockerHub
@@ -83,11 +84,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
        
 
-      - name: argocd
+      - name: ArgoCD login and application deployment
         run: |
           argocd login 65.2.129.155:30095 --username admin --password Hypertest123@ --insecure
-          argocd app set sample-errors-{{ .github.head_ref }} --helm-set image.tag=${{ env.IMAGE_TAG }}
-          argocd app sync sample-errors-{{ .github.head_ref }}
+          argocd app create sample-errors-{{ env.BRANCH_NAME }} --repo https://github.com/hypertestco/sample-errors  --revision HEAD --path sample-errors/ --helm-set image.tag=${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} --helm-set ingress.hosts[0].host={{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co --helm-set ingress.hosts[0].paths[0].path=/ --helm-set ingress.hosts[0].paths[0].pathType=Prefix --project default  --sync-policy automated --sync-option Prune=true --sync-option -CreateNamespace=true --dest-server https://kubernetes.default.svc --dest-namespace sample-errors --upsert
+          # argocd app set sample-errors-{{ env.BRANCH_NAME }} --helm-set image.tag=${{ env.IMAGE_TAG }}
+          # argocd app sync sample-errors-{{ env.BRANCH_NAME }}
 
 
       
