@@ -92,4 +92,4 @@ jobs:
       run: ./hypertest can-run-test
 
     - name: HyperTest start new test
-      run: ./hypertest start-new-test -c ${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co
+      run: ./hypertest start-new-test -c http://${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co

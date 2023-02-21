@@ -2,7 +2,7 @@ name: Delete Application
 on:
   pull_request_target:
     types: 
-      - deleted
+      - closed
     branches:
       - main
 
