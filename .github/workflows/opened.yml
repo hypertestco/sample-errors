@@ -68,7 +68,7 @@ jobs:
           argocd app create sample-errors-${{ env.BRANCH_NAME }} --repo https://github.com/hypertestco/sample-errors  --revision argocd-manifest --path sample-errors/ --helm-set image.repository=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }} --helm-set image.tag=${{ env.IMAGE_TAG }} --helm-set ingress.hosts[0].host=${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co --helm-set ingress.hosts[0].paths[0].path=/ --helm-set ingress.hosts[0].paths[0].pathType=Prefix --project default  --sync-policy automated --sync-option Prune=true --sync-option -CreateNamespace=true --dest-server https://kubernetes.default.svc --dest-namespace sample-errors --upsert
           sleep 20
       
-      - name: Check URL
+      - name: Check if application is up
         run: |
           app_url="http://${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co/app/ping"
           retry_interval=5
@@ -78,14 +78,14 @@ jobs:
           while true; do
             response=$(curl -s -o /dev/null -w "%{http_code}" "$app_url")
             if [ "$response" -eq 200 ]; then
-              echo "URL is available."
+              echo "Application is up and running."
               break
             elif [ $retry_count -lt $max_retries ]; then
-              echo "Error: HTTP response code $response. Retrying in $retry_interval seconds..."
+              echo "Application is not up, response code is $response. Retrying in $retry_interval seconds..."
               sleep "$retry_interval"
               retry_count=$((retry_count+1))
             else
-              echo "URL is not available after $retry_count retries."
+              echo "Application is not up"
               exit 1
             fi
           done
