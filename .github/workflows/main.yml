@@ -69,7 +69,7 @@ jobs:
           command: version
           options: --client
         env:
-         # Only required for first step in job where API is called
+         # Only required for first step in job where API is called.
          # All subsequent steps in a job will not re-download the CLI
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
        
