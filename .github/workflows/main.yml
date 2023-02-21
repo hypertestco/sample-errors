@@ -10,6 +10,7 @@ on:
 
 env:
   HT_BASE_URL: 'http://ht-sample-errors.hypertest.demo-k8s.hypertest.co'
+  HT_API_TOKEN: ${{ secrets.HT_API_TOKEN }}
   HT_COMMIT_HASH: '${{ github.event.pull_request.head.sha }}' ## required because checkout creates a detached commit with a different sha
   BRANCH_NAME: ${{ github.head_ref }}
   IMAGE_NAME: sample-errors
@@ -66,6 +67,7 @@ jobs:
         run: |
           argocd login ${{ secrets.ARGOCD_SERVER }} --username ${{ secrets.ARGOCD_USERNAME }} --password ${{ secrets.ARGOCD_PASSWORD }} --insecure
           argocd app create sample-errors-${{ env.BRANCH_NAME }} --repo https://github.com/hypertestco/sample-errors  --revision argocd-manifest --path sample-errors/ --helm-set image.repository=${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }} --helm-set image.tag=${{ env.IMAGE_TAG }} --helm-set ingress.hosts[0].host=${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co --helm-set ingress.hosts[0].paths[0].path=/ --helm-set ingress.hosts[0].paths[0].pathType=Prefix --project default  --sync-policy automated --sync-option Prune=true --sync-option -CreateNamespace=true --dest-server https://kubernetes.default.svc --dest-namespace sample-errors --upsert
+          sleep 10
           # argocd app set sample-errors-${{ env.BRANCH_NAME }} --helm-set image.tag=${{ env.IMAGE_TAG }}
           # argocd app sync sample-errors-${{ env.BRANCH_NAME }}
 
