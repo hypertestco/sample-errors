@@ -61,12 +61,12 @@ jobs:
           push: true
           tags: ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
           build-args: |
-            PG_HOST_ARG: ${{ secrets.PG_HOST }}
-            PG_USER_ARG: ${{ secrets.PG_USER }}
-            PG_PASSWORD_ARG: ${{ secrets.PG_PASSWORD }}
-            PG_PORT_ARG: ${{ secrets.PG_PORT }}
-            PG_DB_ARG: ${{ secrets.PG_DB }}
-            JWT_SIGN_KEY_ARG: ${{ secrets.JWT_SIGN_KEY }}
+            PG_HOST_ARG=${{ secrets.PG_HOST }}
+            PG_USER_ARG=${{ secrets.PG_USER }}
+            PG_PASSWORD_ARG=${{ secrets.PG_PASSWORD }}
+            PG_PORT_ARG=${{ secrets.PG_PORT }}
+            PG_DB_ARG=${{ secrets.PG_DB }}
+            JWT_SIGN_KEY_ARG=${{ secrets.JWT_SIGN_KEY }}
 
             
   deploy:  
@@ -87,12 +87,12 @@ jobs:
       - name: ArgoCD login and application deployment
         run: |
           argocd login ${{ secrets.ARGOCD_SERVER }} --username ${{ secrets.USERNAME }} --password ${{ secrets.ARGOCD_PASSWORD }} --insecure
-          argocd app create sample-errors-${{ env.BRANCH_NAME }} --repo https://github.com/hypertestco/sample-errors  --revision argocd-manifest --path sample-errors/ --helm-set image.tag=${{ env.IMAGE_TAG }} --helm-set ingress.hosts[0].host=${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co --helm-set ingress.hosts[0].paths[0].path=/ --helm-set ingress.hosts[0].paths[0].pathType=Prefix --project default  --sync-policy automated --sync-option Prune=true --sync-option -CreateNamespace=true --dest-server https://kubernetes.default.svc --dest-namespace sample-errors --upsert
+          argocd app create sample-errors-${{ env.BRANCH_NAME }} --repo https://github.com/hypertestco/sample-errors  --revision argocd-manifest --path sample-errors/ --helm-set image.repository=${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }} --helm-set image.tag=${{ env.IMAGE_TAG }} --helm-set ingress.hosts[0].host=${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co --helm-set ingress.hosts[0].paths[0].path=/ --helm-set ingress.hosts[0].paths[0].pathType=Prefix --project default  --sync-policy automated --sync-option Prune=true --sync-option -CreateNamespace=true --dest-server https://kubernetes.default.svc --dest-namespace sample-errors --upsert
           # argocd app set sample-errors-${{ env.BRANCH_NAME }} --helm-set image.tag=${{ env.IMAGE_TAG }}
           # argocd app sync sample-errors-${{ env.BRANCH_NAME }}
 
 
-      - name: Wait for candidate to come up
+      - name: Wait for application deployment to come up
         uses: nev7n/wait_for_response@v1
         with:
           url: 'http://${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co/app/ping'
@@ -100,9 +100,9 @@ jobs:
           timeout: 2000
           interval: 500
       
-  hypertest-start-test:
+  hypertest-test:
     runs-on: ubuntu-latest
-    needs: build
+    needs: deploy
     steps:
     - name: Download hypertest ci
       run: wget -O ht-cli.tar.xz https://hypertest-binaries-1.s3.ap-south-1.amazonaws.com/ht-cli/ht-cli-latest.tar.xz && tar xvf ht-cli.tar.xz
