@@ -23,7 +23,8 @@ jobs:
   build:  
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Code Checkout
+        uses: actions/checkout@v3
 
       # Login to dockerhub
       - name: Login to DockerHub
@@ -77,7 +78,7 @@ jobs:
         with:
           url: 'http://${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co/app/ping'
           responseCode: 200
-          timeout: 20000
+          timeout: 40000
           interval: 5000
       
   hypertest-test:
