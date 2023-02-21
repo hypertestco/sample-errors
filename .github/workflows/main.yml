@@ -76,9 +76,9 @@ jobs:
 
       - name: argocd
         run: |
-          argocd login https://65.2.140.240:30095 --username admin --password Hypertest123@
-          argocd app set sample-error-{{ .github.head_ref }} -p image.tag=${{ env.IMAGE_TAG }}
-          argocd app sync sample-error-{{ .github.head_ref }}
+          argocd login https://65.2.129.155:30095 --username admin --password Hypertest123@
+          argocd app set sample-errors-{{ .github.head_ref }} --helm-set image.tag=${{ env.IMAGE_TAG }}
+          argocd app sync sample-errors-{{ .github.head_ref }}
 
 
       
