@@ -23,22 +23,22 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # - name: Make envfile
-      #   uses: SpicyPizza/create-envfile@v1.3
-      #   with: 
-      #     envkey_PG_HOST: ${{ secrets.PG_HOST }}
-      #     envkey_PG_USER: ${{ secrets.PG_USER }}
-      #     envkey_PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
-      #     envkey_PG_PORT: ${{ secrets.PG_PORT }}
-      #     envkey_PG_DB: ${{ secrets.PG_DB }}
-      #     envkey_PG_JWT_SIGN_KEY: ${{ secrets.JWT_SIGN_KEY }}
-      #     envkey_PORT: 4321
-      #     envkey_HOST: 0.0.0.0
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v1.3
+        with: 
+          envkey_PG_HOST: ${{ secrets.PG_HOST }}
+          envkey_PG_USER: ${{ secrets.PG_USER }}
+          envkey_PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+          envkey_PG_PORT: ${{ secrets.PG_PORT }}
+          envkey_PG_DB: ${{ secrets.PG_DB }}
+          envkey_PG_JWT_SIGN_KEY: ${{ secrets.JWT_SIGN_KEY }}
+          envkey_PORT: 4321
+          envkey_HOST: 0.0.0.0
 
-      # - name: Checking envs
-      #   run: |
-      #     cat .env
-      #     printenv|sort
+      - name: Checking envs
+        run: |
+          cat .env
+          printenv|sort
  
       # Login to dockerhub
       - name: Login to DockerHub
