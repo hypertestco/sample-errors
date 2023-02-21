@@ -30,11 +30,11 @@ spec:
           # - name: "image.tag"
           #   value: '{{branch}}-{{head_sha}}'
           - name: "ingress.hosts[0].host"
-            value: "{{branch}}.hypertest"
+            value: "{{branch}}-sample-errors.demo-k8s.hypertest.co"
           - name: "ingress.hosts[0].paths[0].path"
             value: "/"
           - name: "ingress.hosts[0].paths[0].pathType"
-            value: "ImplementationSpecific"
+            value: "Prefix"
       project: default  
       syncPolicy:
         automated:

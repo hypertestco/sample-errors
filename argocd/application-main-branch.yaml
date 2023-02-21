@@ -16,11 +16,11 @@ spec:
       - name: "image.tag"
         value: 'main'
       - name: "ingress.hosts[0].host"
-        value: "main.hypertest.demo"
+        value: "main-sample-errors.demo-k8s.hypertest.co"
       - name: "ingress.hosts[0].paths[0].path"
         value: "/"
       - name: "ingress.hosts[0].paths[0].pathType"
-        value: "ImplementationSpecific"
+        value: "Prefix"
   destination: 
     server: https://kubernetes.default.svc
     namespace: sample-errors
