@@ -6,13 +6,11 @@ metadata:
 spec:
   project: default
   source:     
-    repoURL: https://github.com/neha-hypertest/sample-errors
-    targetRevision: argocd-manifest
+    repoURL: https://github.com/hypertestco/sample-errors
+    targetRevision: 'argocd-manifest'
     path: sample-errors
     helm:
       parameters:
-      # - name: "image.repository"
-      #   value: "nehahypertest/sample-errors"
       - name: "image.tag"
         value: '{{branch}}-{{head_sha}}'
       - name: "ingress.hosts[0].host"

@@ -20,7 +20,7 @@ spec:
       name: 'sample-errors-{{branch}}'
     spec:
       source:
-        repoURL: 'https://github.com/neha-hypertest/sample-errors'
+        repoURL: 'https://github.com/hypertestco/sample-errors'
         targetRevision: '{{head_sha}}'
         path: manifests
       project: default

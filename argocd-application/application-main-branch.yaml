@@ -6,8 +6,8 @@ metadata:
 spec:
   project: default
   source:     
-    repoURL: https://github.com/neha-hypertest/sample-errors
-    targetRevision: argocd-manifest
+    repoURL: https://github.com/hypertestco/sample-errors
+    targetRevision: 'argocd-manifest'
     path: sample-errors-main
     helm:
       parameters:
