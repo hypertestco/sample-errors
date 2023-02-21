@@ -70,13 +70,13 @@ jobs:
       
       - name: Check URL
         run: |
-          url="http://${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co/app/ping"
+          app_url="http://${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co/app/ping"
           retry_interval=5
           retry_count=0
-          max_retries=3
+          max_retries=5
 
           while true; do
-            response=$(curl -s -o /dev/null -w "%{http_code}" "$url")
+            response=$(curl -s -o /dev/null -w "%{http_code}" "$app_url")
             if [ "$response" -eq 200 ]; then
               echo "URL is available."
               break

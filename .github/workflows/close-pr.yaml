@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: '30 0 * * *' # Run at midnight every day
 
+  workflow_dispatch:
+
+
 jobs:
   close_old_pull_requests:
     runs-on: ubuntu-latest
