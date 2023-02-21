@@ -1,4 +1,4 @@
-name: CI
+name: Create Application
 on:
   pull_request_target:
     types: [opened, synchronize, reopened, edited]
@@ -68,7 +68,7 @@ jobs:
         run: |
           argocd login ${{ secrets.ARGOCD_SERVER }} --username ${{ secrets.ARGOCD_USERNAME }} --password ${{ secrets.ARGOCD_PASSWORD }} --insecure
           argocd app create sample-errors-${{ env.BRANCH_NAME }} --repo https://github.com/hypertestco/sample-errors  --revision argocd-manifest --path sample-errors/ --helm-set image.repository=${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }} --helm-set image.tag=${{ env.IMAGE_TAG }} --helm-set ingress.hosts[0].host=${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co --helm-set ingress.hosts[0].paths[0].path=/ --helm-set ingress.hosts[0].paths[0].pathType=Prefix --project default  --sync-policy automated --sync-option Prune=true --sync-option -CreateNamespace=true --dest-server https://kubernetes.default.svc --dest-namespace sample-errors --upsert
-          sleep 10
+          sleep 20
           # argocd app set sample-errors-${{ env.BRANCH_NAME }} --helm-set image.tag=${{ env.IMAGE_TAG }}
           # argocd app sync sample-errors-${{ env.BRANCH_NAME }}
 
@@ -78,7 +78,7 @@ jobs:
         with:
           url: 'http://${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co/app/ping'
           responseCode: 200
-          timeout: 40000
+          timeout: 60000
           interval: 5000
       
   hypertest-test:
