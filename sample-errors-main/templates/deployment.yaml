@@ -57,7 +57,7 @@ spec:
           - name: APPLICATION_PORT
             value: "4321" # port on which your app is running
           - name: HYPERTEST_LOGGER_URL
-            value: "ht-sample-errors.hypertest.logger.demo-k8s.hypertest.co/" #for eg: 1.2.3.4:8000
+            value: "ht-sample-errors.logger.hypertest.demo-k8s.hypertest.co/" #for eg: 1.2.3.4:8000
           - name: HT_ENV
             value: "sample-errors-main" # for eg: test, staging etc
       {{- with .Values.nodeSelector }}
