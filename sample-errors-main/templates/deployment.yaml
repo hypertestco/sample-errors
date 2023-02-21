@@ -51,6 +51,15 @@ spec:
             initialDelaySeconds: 5
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+        - name: goreplay
+          image: nehahypertest/goreplay-0.16.1:15-01-22
+          env:
+          - name: APPLICATION_PORT
+            value: "4321" # port on which your app is running
+          - name: HYPERTEST_LOGGER_URL
+            value: "ht-sample-errors.hypertest.logger.demo-k8s.hypertest.co/" #for eg: 1.2.3.4:8000
+          - name: HT_ENV
+            value: "sample-errors-main" # for eg: test, staging etc
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

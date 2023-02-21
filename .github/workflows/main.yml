@@ -45,7 +45,7 @@ jobs:
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
-          username: ${{ env.DOCKERHUB_USERNAME }}
+          username: ${DOCKERHUB_TOKEN}
           password: ${{ env.DOCKERHUB_TOKEN }}
 
       # - name: Build and push docker image
@@ -86,7 +86,7 @@ jobs:
 
       - name: ArgoCD login and application deployment
         run: |
-          argocd login 65.2.129.155:30095 --username admin --password Hypertest123@ --insecure
+          argocd login ${{ secrets.ARGOCD_SERVER }} --username ${{ secrets.ARGOCD_USERNAME }} --password ${{ secrets.ARGOCD_PASSWORD }} --insecure
           argocd app create sample-errors-${{ env.BRANCH_NAME }} --repo https://github.com/hypertestco/sample-errors  --revision HEAD --path sample-errors/ --helm-set image.tag=${{ env.IMAGE_TAG }} --helm-set ingress.hosts[0].host=${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co --helm-set ingress.hosts[0].paths[0].path=/ --helm-set ingress.hosts[0].paths[0].pathType=Prefix --project default  --sync-policy automated --sync-option Prune=true --sync-option -CreateNamespace=true --dest-server https://kubernetes.default.svc --dest-namespace sample-errors --upsert
           # argocd app set sample-errors-${{ env.BRANCH_NAME }} --helm-set image.tag=${{ env.IMAGE_TAG }}
           # argocd app sync sample-errors-${{ env.BRANCH_NAME }}
