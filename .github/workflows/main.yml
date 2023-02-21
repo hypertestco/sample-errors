@@ -75,8 +75,8 @@ jobs:
         with:
           url: 'http://${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co/app/ping'
           responseCode: 200
-          timeout: 2000
-          interval: 500
+          timeout: 20000
+          interval: 5000
       
   hypertest-test:
     runs-on: ubuntu-latest
