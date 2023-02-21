@@ -12,7 +12,7 @@ env:
   IMAGE_NAME: sample-errors
   IMAGE_TAG: ${{ github.head_ref }}-${{ github.event.pull_request.head.sha }}
   DOCKERHUB_USERNAME: nehahypertest
-  DOCKERHUB_TOKEN: '${{ secrets.DOCKERHUB_TOKEN }}''
+  DOCKERHUB_TOKEN: '${{ secrets.DOCKERHUB_TOKEN }}'
 
 
 jobs:
