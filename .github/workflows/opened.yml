@@ -67,27 +67,46 @@ jobs:
           argocd login ${{ secrets.ARGOCD_SERVER }} --username ${{ secrets.ARGOCD_USERNAME }} --password ${{ secrets.ARGOCD_PASSWORD }} --insecure
           argocd app create sample-errors-${{ env.BRANCH_NAME }} --repo https://github.com/hypertestco/sample-errors  --revision argocd-manifest --path sample-errors/ --helm-set image.repository=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }} --helm-set image.tag=${{ env.IMAGE_TAG }} --helm-set ingress.hosts[0].host=${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co --helm-set ingress.hosts[0].paths[0].path=/ --helm-set ingress.hosts[0].paths[0].pathType=Prefix --project default  --sync-policy automated --sync-option Prune=true --sync-option -CreateNamespace=true --dest-server https://kubernetes.default.svc --dest-namespace sample-errors --upsert
           sleep 20
-          # argocd app set sample-errors-${{ env.BRANCH_NAME }} --helm-set image.tag=${{ env.IMAGE_TAG }}
-          # argocd app sync sample-errors-${{ env.BRANCH_NAME }}
+      
+      - name: Check URL
+        run: |
+          url="http://${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co"
+          retry_interval=5
+          retry_count=0
+          max_retries=3
 
+          while true; do
+            response=$(curl -s -o /dev/null -w "%{http_code}" "$url")
+            if [ "$response" -eq 200 ]; then
+              echo "URL is available."
+              break
+            elif [ $retry_count -lt $max_retries ]; then
+              echo "Error: HTTP response code $response. Retrying in $retry_interval seconds..."
+              sleep "$retry_interval"
+              retry_count=$((retry_count+1))
+            else
+              echo "URL is not available after $retry_count retries."
+              exit 1
+            fi
+          done
 
-      - name: Wait for application deployment to come up
-        uses: nev7n/wait_for_response@v1
-        with:
-          url: 'http://${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co/app/ping'
-          responseCode: 200
-          timeout: 60000
-          interval: 5000
+      # - name: Wait for application deployment to come up
+      #   uses: nev7n/wait_for_response@v1
+      #   with:
+      #     url: 'http://${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co/app/ping'
+      #     responseCode: 200
+      #     timeout: 60000
+      #     interval: 5000
       
   hypertest-test:
     runs-on: ubuntu-latest
     needs: deploy
     steps:
-    - name: Download hypertest ci
+    - name: Download HyperTest CLI
       run: wget -O ht-cli.tar.xz https://hypertest-binaries-1.s3.ap-south-1.amazonaws.com/ht-cli/ht-cli-latest.tar.xz -nv && tar xvf ht-cli.tar.xz
     
-    - name: HyperTest can run test
+    - name: Check if HyperTest can start a test run
       run: ./hypertest can-run-test
 
-    - name: HyperTest start new test
+    - name: Start a new test with HyperTest
       run: ./hypertest start-new-test -c http://${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co
