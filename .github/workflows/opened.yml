@@ -12,9 +12,9 @@ env:
   HT_BASE_URL: 'http://ht-sample-errors.hypertest.demo-k8s.hypertest.co'
   HT_API_TOKEN: ${{ secrets.HT_API_TOKEN }}
   HT_COMMIT_HASH: '${{ github.event.pull_request.head.sha }}' ## required because checkout creates a detached commit with a different sha
-  BRANCH_NAME: {{ github.owner_name }}-${{ github.head_ref }}
+  BRANCH_NAME: ${{ github.owner_name }}-${{ github.head_ref }}
   IMAGE_NAME: sample-errors
-  IMAGE_TAG: {{ github.owner_name }}-${{ github.head_ref }}-${{ github.event.pull_request.head.sha }}
+  IMAGE_TAG: ${{ github.owner_name }}-${{ github.head_ref }}-${{ github.event.pull_request.head.sha }}
 
 
 jobs:
