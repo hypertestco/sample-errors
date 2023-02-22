@@ -7,7 +7,7 @@ on:
       - main
 
 env:
-  BRANCH_NAME: ${{ github.head_ref }}
+  BRANCH_NAME: ${{ github.repository_owner }}-${{ github.head_ref }}
 
 jobs:
   delete-deployment:  
