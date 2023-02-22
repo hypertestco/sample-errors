@@ -16,11 +16,23 @@ env:
   IMAGE_NAME: sample-errors
   IMAGE_TAG: ${{ github.repository_owner }}-${{ github.head_ref }}-${{ github.event.pull_request.head.sha }}
 
+concurrency: 
+  group: ${{ github.repository_owner }}-${{ github.head_ref }}
+  cancel-in-progress: true
 
+  
 jobs:
   build:  
     runs-on: ubuntu-latest
     steps:
+      - name: Check branch name
+        run: |
+          if [[ "$GITHUB_HEAD_REF" == */* ]]; then
+            echo "Branch name contains a forward slash"
+            exit 1
+          fi
+
+
       - name: Code Checkout
         uses: actions/checkout@v3
 
@@ -106,7 +118,16 @@ jobs:
       run: wget -O ht-cli.tar.xz https://hypertest-binaries-1.s3.ap-south-1.amazonaws.com/ht-cli/ht-cli-latest.tar.xz -nv && tar xvf ht-cli.tar.xz
     
     - name: Check if HyperTest can start a test run
-      run: ./hypertest can-run-test
+      run: |
+        while true; do
+            output=./hypertest can-run-test
+            if [[ "$output" == '{ canRunTest: true }' ]]; then
+              echo "HyperTest can run test!"
+              break
+            fi
+            echo "Waiting for HyperTest to finish running test"
+            sleep 5
+          done
 
     - name: Start a new test with HyperTest
       run: ./hypertest start-new-test -c http://${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co
