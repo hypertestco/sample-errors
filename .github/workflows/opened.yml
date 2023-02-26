@@ -1,7 +1,7 @@
 name: Create Application
 on:
   pull_request_target:
-    types: [opened, reopened, edited]
+    types: [opened, reopened, synchronize]
     branches:
       - main
 
@@ -35,6 +35,15 @@ jobs:
 
       - name: Code Checkout
         uses: actions/checkout@v3
+
+      - name: Check package.json integrity
+        run: |
+          current_md5=$(md5sum package.json | cut -d ' ' -f1)
+          previous_md5=${{ secrets.PACKAGE_JSON_MD5SUM }}
+          if [ "$current_md5" != "$previous_md5" ]; then
+            echo "Package.json has changed, cancelling workflow..."
+            exit 1
+          fi
 
       # Login to dockerhub
       - name: Login to DockerHub
