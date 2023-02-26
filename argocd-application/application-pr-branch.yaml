@@ -12,9 +12,9 @@ spec:
     helm:
       parameters:
       - name: "image.tag"
-        value: '{{branch}}-{{head_sha}}'
+        value: '{{repo_owner}}-{{branch}}-{{head_sha}}'
       - name: "ingress.hosts[0].host"
-        value: "pr-branch-sample-errors.demo-k8s.hypertest.co"
+        value: "{{repo_owner}}-{{branch}}-sample-errors.demo-k8s.hypertest.co"
       - name: "ingress.hosts[0].paths[0].path"
         value: "/"
       - name: "ingress.hosts[0].paths[0].pathType"

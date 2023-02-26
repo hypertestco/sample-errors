@@ -14,7 +14,7 @@ spec:
       - name: "image.tag"
         value: 'main'
       - name: "ingress.hosts[0].host"
-        value: "main-sample-errors.demo-k8s.hypertest.co"
+        value: "hypertestco-main-sample-errors.demo-k8s.hypertest.co"
       - name: "ingress.hosts[0].paths[0].path"
         value: "/"
       - name: "ingress.hosts[0].paths[0].pathType"
