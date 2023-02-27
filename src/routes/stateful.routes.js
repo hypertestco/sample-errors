@@ -339,7 +339,7 @@ router.post('/stateful/approve-loan', async (req, res, next) => {
         data: {}
       });
     }
-    if ((userProfile.employmentType === 'Salried' && userProfile.monthlyIncome > 15000)
+    if ((userProfile.employmentType === 'Salaried' && userProfile.monthlyIncome > 15000)
           || (userProfile.employmentType === 'Self Employed' && userProfile.monthlyIncome > 50000)) {
       await approveDocsAndLoan(userId, loanId);
       return res.status(200).json({
