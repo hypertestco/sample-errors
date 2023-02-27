@@ -26,3 +26,9 @@ Now copy paste below lines in your .eslintrc.js
 1. npm i in the project directory.
 2. For run the server on local use ```npm run local```
 3. Hit ping API http://localhost:{process.env.PORT}/test/v1/ping you will get success response.
+
+
+
+# Application Deployment
+Your application will be available on http://<your_repo_owner_name>:<your_branch_name>-sample-errors.demo-k8s.hypertest.co
+For eg: For this branch: owner name is hypertestco and branch name is sample-error so the build for this branch will be deployed on http://hypertestco-sample-error-sample-errors.demo-k8s.hypertest.co
