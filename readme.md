@@ -31,14 +31,14 @@ Now copy paste below lines in your .eslintrc.js
 
 
 
-# Guidelines for fork and PR
+# Guidelines for Forks and Pull Requests
 Please take note of below guidelines while forking the repository,creating new branch and raising pull requests
 1. Branch name should not contain "/"
 2. You are not allowed to modify Package.json and Dockerfile.
 
 
-# PR and CI piepline
-* A CI pipleine will run after you raise a PR from your forked repo to this repo
+# Pull Requests and CI pipeline
+* A CI pipeline will run after you raise a PR from your forked repo to this repo
 * Pipeline will do the following:
 1. Branch name validation - branch name should not contain "/"
 2. Package.json and Dockerfile should not be changed
