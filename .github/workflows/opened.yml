@@ -38,10 +38,15 @@ jobs:
       - name: Check package.json integrity
         run: |
           ls -la
-          current_md5=$(md5sum package.json | cut -d ' ' -f1)
-          previous_md5=${{ secrets.PACKAGE_JSON_MD5SUM }}
-          if [ "$current_md5" != "$previous_md5" ]; then
+          current_md5_pkg=$(md5sum package.json | cut -d ' ' -f1)
+          previous_md5_pkg=${{ secrets.PACKAGE_JSON_MD5SUM }}
+          current_md5_Dockerfile=$(md5sum Dockerfile | cut -d ' ' -f1)
+          previous_md5_Dockerfile=${{ secrets.DOCKERFILE_MD5SUM }}
+          if [ "$current_md5_pkg" != "$previous_md5_pkg" ]; then
             echo "Package.json has changed, cancelling workflow..."
+            exit 1
+          elif [ "$current_md5_Dockerfile" != "$previous_md5_Dockerfile" ]; then
+            echo "Dockerfile has changed, cancelling workflow..."
             exit 1
           fi
 
