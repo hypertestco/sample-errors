@@ -31,7 +31,7 @@ const validators = {
   ],
   actionOnLoan: [
     body('loanId').not().isEmpty().isInt().toInt().withMessage('Only numerics allowed.'),
-    body('action').not().isEmpty().isIn(['Disburse', 'Decline']).withMessage('Valid loan actions are (Withdraw or Decline).')
+    body('action').not().isEmpty().isIn(['Disburse', 'Decline']).withMessage('Valid loan actions are (Disburse or Decline).')
   ],
   documentUploadChecks: [
     query('loanId').not().isEmpty().isInt().toInt().withMessage('Only numerics allowed.'),
