@@ -36,6 +36,7 @@ jobs:
       - name: Code Checkout
         uses: actions/checkout@v3
         with:
+          repository: ${{ github.repository }}
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Check package.json integrity
