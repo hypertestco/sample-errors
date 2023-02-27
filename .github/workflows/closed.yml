@@ -7,7 +7,7 @@ on:
       - main
 
 env:
-  BRANCH_NAME: ${{ github.repository_owner }}-${{ github.head_ref }}
+  APP_NAME: ${{ github.repository_owner }}-${{ github.head_ref }}-sample-errors
 
 jobs:
   delete-deployment:  
@@ -28,4 +28,4 @@ jobs:
       - name: ArgoCD login and delete application deployment
         run: |
           argocd login ${{ secrets.ARGOCD_SERVER }} --username ${{ secrets.ARGOCD_USERNAME }} --password ${{ secrets.ARGOCD_PASSWORD }} --insecure
-          argocd app delete sample-errors-${{ env.BRANCH_NAME }} -y 
+          argocd app delete ${{ env.APP_NAME }} -y 
