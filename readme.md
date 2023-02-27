@@ -31,16 +31,23 @@ Now copy paste below lines in your .eslintrc.js
 
 
 
-# App Deployment and CI Pipeline
-Please take note of below guidelines while forking the repository and raising pull requests
+# Guidelines for fork and PR
+Please take note of below guidelines while forking the repository,creating new branch and raising pull requests
 1. Branch name should not contain "/"
 2. You are not allowed to modify Package.json and Dockerfile.
 
-* A CI pipleine will run after you raise a PR from your forked repo to this repo, check for the completion status of Pipeline. After the Pipeline is completed
-* Your application will be available on <your_repo_owner_name>:<your_repo_name>-sample-errors.demo-k8s.hypertest.co
-* Hypertest Dashboard is available on http://ht-sample-errors.hypertest.demo-k8s.hypertest.co
-* You can see the status of your test run in CI pipeline 
 
+# PR and CI piepline
+* A CI pipleine will run after you raise a PR from your forked repo to this repo
+* Pipeline will do the following:
+1. Branch name validation - branch name should not contain "/"
+2. Package.json and Dockerfile should not be changed
+3. Once the above validations passes, it will build and deploy it
+4. Your application will be available on http://<your_repo_owner_name>:<your_branch_name>-sample-errors.demo-k8s.hypertest.co
+5. For eg: For this branch: owner name is hypertestco and branch name is main so the build for this branch will be deployed on http://hypertestco-main-sample-errors.demo-k8s.hypertest.co
+6. The Pipeine will automatically start a new test run in HyperTest where it will be comparing responses between the main branch build and your PR branch build
+7. You can see the test results on your github PR itself under checks with name "Hypertest check"
+8. NOTE: When the pipeline is runnning, the app will be unavailable for some time while the new build is getting deployed.
 
 # Mirror Traffic:
 * To Mirror Traffic: hit the request on http://hypertestco-main-sample-errors.demo-k8s.hypertest.co
