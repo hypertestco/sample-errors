@@ -36,7 +36,6 @@ jobs:
       - name: Code Checkout
         uses: actions/checkout@v3
         with:
-          repository: ${{ github.repository }}
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Check package.json integrity
@@ -49,7 +48,6 @@ jobs:
             exit 1
           fi
 
-      # Login to dockerhub
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
@@ -114,28 +112,6 @@ jobs:
           echo "Application is not up"
           exit 1
 
-          # while true; do
-          #   response=$(curl -s -o /dev/null -w "%{http_code}" "$app_url")
-          #   if [ "$response" -eq 200 ]; then
-          #     echo "Application is up and running."
-          #     break
-          #   elif [ $retry_count -lt $max_retries ]; then
-          #     echo "Application is not up, response code is $response. Retrying in $retry_interval seconds..."
-          #     sleep "$retry_interval"
-          #     retry_count=$((retry_count+1))
-          #   else
-          #     echo "Application is not up"
-          #     exit 1
-          #   fi
-          # done
-
-      # - name: Wait for application deployment to come up
-      #   uses: nev7n/wait_for_response@v1
-      #   with:
-      #     url: 'http://${{ env.BRANCH_NAME }}-sample-errors.demo-k8s.hypertest.co/app/ping'
-      #     responseCode: 200
-      #     timeout: 60000
-      #     interval: 5000
       
   hypertest-test:
     runs-on: ubuntu-latest
