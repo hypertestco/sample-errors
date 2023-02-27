@@ -47,7 +47,7 @@ Please take note of below guidelines while forking the repository,creating new b
 5. For eg: For this branch: owner name is hypertestco and branch name is main so the build for this branch will be deployed on http://hypertestco-main-sample-errors.demo-k8s.hypertest.co
 6. The Pipeine will automatically start a new test run in HyperTest where it will be comparing responses between the main branch build and your PR branch build
 7. You can see the test results on your github PR itself under checks with name "Hypertest check"
-8. NOTE: When the pipeline is runnning, the app will be unavailable for some time while the new build is getting deployed.
+8. NOTE: When the pipeline is runnning, the app will be unavailable for some time while the new build is getting deployed
 
 # Mirror Traffic:
 * To Mirror Traffic: hit the request on http://hypertestco-main-sample-errors.demo-k8s.hypertest.co
