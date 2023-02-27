@@ -28,12 +28,19 @@ Now copy paste below lines in your .eslintrc.js
 3. Hit ping API http://localhost:{process.env.PORT}/test/v1/ping you will get success response.
 
 
+
+
+
 # App Deployment and CI Pipeline
 Please take note of below guidelines while forking the repository and raising pull requests
 1. Branch name should not contain "/"
-2. You are not allowed to modify Package.json and Dockerfile
+2. You are not allowed to modify Package.json and Dockerfile.
 
-* A CI pipleine will run after you raise a PR from your forked repo to this repo, check for the completion status of Pipeline
-* Your application will be available on <your_repo_owner_name>:<your_repo>-sample-errors.demo-k8s.hypertest.co
+* A CI pipleine will run after you raise a PR from your forked repo to this repo, check for the completion status of Pipeline. After the Pipeline is completed
+* Your application will be available on <your_repo_owner_name>:<your_repo_name>-sample-errors.demo-k8s.hypertest.co
 * Hypertest Dashboard is available on http://ht-sample-errors.hypertest.demo-k8s.hypertest.co
+* You can see the status of your test run in CI pipeline 
+
+
+# Mirror Traffic:
 * To Mirror Traffic: hit the request on http://hypertestco-main-sample-errors.demo-k8s.hypertest.co
