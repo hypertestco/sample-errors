@@ -1,4 +1,4 @@
-name: Create Application
+name: Create Main Application
 on:
   push:
     branches:

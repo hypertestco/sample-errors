@@ -1,4 +1,4 @@
-name: Create Application
+name: Create Application on PR Events
 on:
   pull_request_target:
     types: [opened, reopened, synchronize]
