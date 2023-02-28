@@ -21,6 +21,7 @@ class MySqlConn {
       text: query,
     });
     await client.end();
+    client.release(true);
     if (['INSERT', 'UPDATE', 'DELETE'].includes(result.command)) return result.rowCount;
     return result.rows;
   }
@@ -33,10 +34,13 @@ class MySqlConn {
         await client.query(arrayOfQueryInSequence[i]);
       }
       await client.query('COMMIT');
+      await client.end();
+      client.release(true);
     } catch (err) {
       console.log(err);
       await client.query('ROLLBACK');
-      client.release();
+      await client.end();
+      client.release(true);
       throw e;
     }
   }
