@@ -291,7 +291,7 @@ router.put('/stateful/action-on-loan', validators.actionOnLoan, validationErrorH
       });
     }
     if (prevLoanDetails.id !== reqData.loanId) {
-      return res.status().json({
+      return res.status(400).json({
         success: false,
         msg: 'Invalid loan id provided.',
         data: {}
