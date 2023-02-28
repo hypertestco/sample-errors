@@ -77,7 +77,7 @@ class RidesQuery {
 
   async actionUpdateOnLoan(userId, reqData) {
     let status = null;
-    if (reqData.status === 'Disburse') status = 'Disbursed';
+    if (reqData.action === 'Disburse') status = 'Disbursed';
     else status = 'Declined';
     const sqlQuery = `UPDATE loan SET status = '${status}' WHERE user_id = ${userId} AND id = ${reqData.loanId};`;
     await execSQLQuery(sqlQuery);
