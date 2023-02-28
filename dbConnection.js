@@ -10,8 +10,8 @@ const pool = new Pool({
   password: process.env.PG_PASSWORD,
   database: process.env.PG_DB,
   max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
+  idleTimeoutMillis: 10000,
+  connectionTimeoutMillis: 10000,
 });
 
 class MySqlConn {
