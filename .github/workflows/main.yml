@@ -1,0 +1,147 @@
+name: Create Application on PR Events - from forked
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+    branches:
+      - main
+
+env:
+  HT_BASE_URL: 'http://ht-sample-errors.hypertest.demo-k8s.hypertest.co'
+  HT_API_TOKEN: ${{ secrets.HT_API_TOKEN }}
+  HT_COMMIT_HASH: '${{ github.event.pull_request.head.sha }}' ## required because checkout creates a detached commit with a different sha
+  APP_NAME: ${{ github.repository_owner }}-${{ github.head_ref }}-sample-errors
+  IMAGE_NAME: sample-errors
+  IMAGE_TAG: ${{ github.repository_owner }}-${{ github.head_ref }}-${{ github.event.pull_request.head.sha }}
+
+concurrency: 
+  group: ${{ github.repository_owner }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+  
+jobs:
+  build:  
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch name
+        run: |
+          if [[ "$GITHUB_HEAD_REF" == */* ]]; then
+            echo "Branch name contains a forward slash"
+            exit 1
+          fi
+
+
+      - name: Code Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Check package.json integrity
+        run: |
+          ls -la
+          current_md5_pkg=$(md5sum package.json | cut -d ' ' -f1)
+          previous_md5_pkg=${{ secrets.PACKAGE_JSON_MD5SUM }}
+          current_md5_Dockerfile=$(md5sum Dockerfile | cut -d ' ' -f1)
+          previous_md5_Dockerfile=${{ secrets.DOCKERFILE_MD5SUM }}
+          if [ "$current_md5_pkg" != "$previous_md5_pkg" ]; then
+            echo "Package.json has changed, cancelling workflow..."
+            exit 1
+          elif [ "$current_md5_Dockerfile" != "$previous_md5_Dockerfile" ]; then
+            echo "Dockerfile has changed, cancelling workflow..."
+            exit 1
+          fi
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          build-args: |
+            PG_HOST_ARG=${{ secrets.PG_HOST }}
+            PG_USER_ARG=${{ secrets.PG_USER }}
+            PG_PASSWORD_ARG=${{ secrets.PG_PASSWORD }}
+            PG_PORT_ARG=${{ secrets.PG_PORT }}
+            PG_DB_ARG=${{ secrets.PG_DB }}
+            JWT_SIGN_KEY_ARG=${{ secrets.JWT_SIGN_KEY }}
+
+            
+  deploy:  
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: ArgoCD CLI
+        uses: clowdhaus/argo-cd-action/@main
+        with:
+          version: 2.5.5
+          command: version
+          options: --client
+        env:
+         # Only required for first step in job where API is called
+         # All subsequent steps in a job will not re-download the CLI
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+       
+
+      - name: ArgoCD login and application deployment
+        run: |
+          argocd login ${{ secrets.ARGOCD_SERVER }} --username ${{ secrets.ARGOCD_USERNAME }} --password ${{ secrets.ARGOCD_PASSWORD }} --insecure
+          argocd app create ${{ env.APP_NAME }} --repo https://github.com/hypertestco/sample-errors  --revision argocd-manifest --path sample-errors/ --helm-set image.repository=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }} --helm-set image.tag=${{ env.IMAGE_TAG }} --helm-set ingress.hosts[0].host=${{ env.APP_NAME }}.demo-k8s.hypertest.co --helm-set ingress.hosts[0].paths[0].path=/ --helm-set ingress.hosts[0].paths[0].pathType=Prefix --project default  --sync-policy automated --sync-option Prune=true --sync-option -CreateNamespace=true --dest-server https://kubernetes.default.svc --dest-namespace sample-errors --upsert
+          sleep 20
+      
+      - name: Check if application is up
+        run: |
+          app_url="http://${{ env.APP_NAME }}.demo-k8s.hypertest.co/app/ping"
+          retry_interval=10
+          retry_count=0
+          max_retries=5
+
+          while [[ $retry_count -lt $max_retries ]]; do
+            response=$(curl -s -o /dev/null -w "%{http_code}" "$app_url")
+            if [ "$response" -eq 200 ]; then
+              echo "Application is up and running."
+              exit 0
+            else
+              echo "Application is not up, response code is $response. Retrying in $retry_interval seconds..."
+              retry_count=$((retry_count+1))
+              sleep "$retry_interval"
+            fi
+          done
+          echo "Application is not up"
+          exit 1
+
+      
+  hypertest-test:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+    - name: Download HyperTest CLI
+      run: wget -O ht-cli.tar.xz https://hypertest-binaries-1.s3.ap-south-1.amazonaws.com/ht-cli/ht-cli-latest.tar.xz -nv && tar xvf ht-cli.tar.xz
+    
+    - name: Check if HyperTest can start a test run
+      run: |
+        retry_count=0
+        max_retries=5
+        retry_interval=10
+
+          while [[ $retry_count -lt $max_retries ]]; do
+            output=$(./hypertest can-run-test)
+            if echo "$output" | grep -q "{ canRunTest: true }"; then
+              echo "Hypertest can start a new test run"
+              exit 0
+            else
+              echo $output
+              echo "Waiting for HyperTest to finish running test. Retrying in $retry_interval seconds..."
+              retry_count=$((retry_count+1))
+              sleep 5
+            fi
+          done
+          echo "Seems like a test is already running in HyperTest, Wait for it to complete/terminate it and retrigger this pipeline"
+          exit 1
+
+    - name: Start a new test with HyperTest
+      run: ./hypertest start-new-test -c http://${{ env.APP_NAME }}.demo-k8s.hypertest.co
