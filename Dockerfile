@@ -22,5 +22,5 @@ COPY package*.json ./
 RUN npm install
 COPY *.js ./
 COPY src ./src/
-EXPOSE 4321
+EXPOSE 4322
 CMD [ "node", "app.js" ]
