@@ -30,5 +30,5 @@ Now copy paste below lines in your .eslintrc.js
 
 
 # Application Deployment
-Your application will be available on http://<your_repo_owner_name>:<your_branch_name>-sample-errors.demo-k8s.hypertest.co
+Your application will be available on http://<your_repo_owner_name>-<your_branch_name>-sample-errors.demo-k8s.hypertest.co
 For eg: For this branch: owner name is hypertestco and branch name is sample-error so the build for this branch will be deployed on http://hypertestco-sample-error-sample-errors.demo-k8s.hypertest.co
