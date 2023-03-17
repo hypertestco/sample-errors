@@ -1,4 +1,4 @@
-name: Backup-cache-run-from-master-only
+name: rebuild-cache-run-from-master-only
 on:
   schedule:
     - cron: '0 0 */6 * *' # Run at midnight every 6th day of month
@@ -28,7 +28,7 @@ jobs:
           echo "============== gh-actions install ===================="
           gh extension install actions/gh-actions-cache || true
           echo "============== Cache Delete ===================="
-          gh actions-cache ht-cli-cache --confirm || true
+          gh actions-cache delete ht-cli-cache --confirm || true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Cache node modules
