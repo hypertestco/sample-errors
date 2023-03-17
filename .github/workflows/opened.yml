@@ -115,6 +115,21 @@ jobs:
           exit 1
 
       
+  mirror-traffic:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+    - name: Hitting some API's to generate traffic
+      run: |
+        curl -X GET http://hypertestco-main-sample-errors.demo-k8s.hypertest.co/app/performance/delayed
+        curl -X GET http://hypertestco-main-sample-errors.demo-k8s.hypertest.co/app/stateless/array_value_modified_example
+        curl -X GET http://hypertestco-main-sample-errors.demo-k8s.hypertest.co/app/stateless/content_type_example
+        curl -X GET http://hypertestco-main-sample-errors.demo-k8s.hypertest.co/app/stateless/status_code_example
+        curl -X GET http://hypertestco-main-sample-errors.demo-k8s.hypertest.co/app/stateless/key_removed_example
+        curl -X GET http://hypertestco-main-sample-errors.demo-k8s.hypertest.co/app/stateless/header_modified_example
+        curl -X GET http://hypertestco-main-sample-errors.demo-k8s.hypertest.co/app/stateless/value_modified_example
+        
+        
   hypertest-test:
     runs-on: ubuntu-latest
     needs: deploy
