@@ -8,6 +8,8 @@ jobs:
     if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
       - name: Delete existing cache
         run: |
           echo "============== gh-actions install ===================="
