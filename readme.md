@@ -44,7 +44,7 @@ Please take note of below guidelines while forking the repository, creating new 
 4. Your application will be available on http://<your_repo_owner_name>-<your_branch_name>-sample-errors.demo-k8s.hypertest.co
 5. For eg: For this branch: owner name is hypertestco and branch name is main so the build for this branch will be deployed on http://hypertestco-main-sample-errors.demo-k8s.hypertest.co
 6. The Pipeine will automatically start a new test run in HyperTest where it will compare responses between the main branch build and your PR branch build and give you the analyzed test reports
-7. You can see the test results on your github PR itself under checks with name "Hypertest check"
+7. You can see the test results on your github PR itself under checks with name "Hypertest check", it also has a link which will redirect you to your test run on HyperTest Dashboard
 ![image](https://user-images.githubusercontent.com/111106290/225868698-01c9b583-7b39-4425-b07e-3a2ab76dca98.png)
 
 
@@ -55,13 +55,18 @@ Please take note of below guidelines while forking the repository, creating new 
 # Details on HyperTest Dashboard
 1. HyperTest Dashboard - http://ht-sample-errors.hypertest.demo-k8s.hypertest.co
 2. The tests triggered by PR event will be visible in Test Results Section
-![image](https://user-images.githubusercontent.com/111106290/225868047-927b089d-d749-4ea5-8e90-30811322db74.png)
+![image](https://user-images.githubusercontent.com/111106290/225873484-ef9faa9c-53b8-46fd-b735-546e64f3a749.png)
 
-3. Mirrored Traffic is under Sessions Page, expand the session and click on view under Actions to see requests.
+
+3.Details for your CI can be clicking the CI env variables, you can verify your PR number from here if needed
+![image](https://user-images.githubusercontent.com/111106290/225873955-890ec6c6-b50b-43c6-9a01-a8a918bd4491.png)
+
+
+4. Mirrored Traffic is under Sessions Page, expand the session and click on view under Actions to see requests.
 ![Screenshot from 2023-03-17 15-05-36](https://user-images.githubusercontent.com/111106290/225867661-ae941912-e09a-416b-9906-daf5e802a720.png)
 
-4. You will not have permission to trigger tests from UI as you will only have guest access.
-5. Please go through our usage guides to know more https://docs.hypertest.co/user-guides/usage-guide
+5. You will not have permission to trigger tests from UI as you will only have guest access.
+6. Please go through our usage guides to know more https://docs.hypertest.co/user-guides/usage-guide
 
 # How to Mirror Traffic:
 We are capturing all traffic which is coming on http://hypertestco-main-sample-errors.demo-k8s.hypertest.co only.
