@@ -52,21 +52,25 @@ Please take note of below guidelines while forking the repository, creating new 
 9. You can always go to the pipeline running for your PR from your PR or from Actions tab, for more information on what is happening.
 
 
-# Details on HyperTest Dashboard
-1. HyperTest Dashboard - http://ht-sample-errors.hypertest.demo-k8s.hypertest.co
-2. The tests triggered by PR event will be visible in Test Results Section
+# Access HyperTest Dashboard
+1. Central HyperTest Dashboard - http://central.hypertest.demo-k8s.hypertest.co/
+2. Sevice HyperTest Dashboard - http://ht-sample-errors.hypertest.demo-k8s.hypertest.co
+3. Sign Up on central dashboard using your email id, you will get default guest role access which is read only access
+4. Refer to our User management guide to know more - https://docs.hypertest.co/user-guides/user-management
+5. Navigate to Sevice HyperTest Dashboard on http://ht-sample-errors.hypertest.demo-k8s.hypertest.co
+6. The tests triggered by PR event will be visible in Test Results Section
 ![image](https://user-images.githubusercontent.com/111106290/225873484-ef9faa9c-53b8-46fd-b735-546e64f3a749.png)
 
 
-3.Details for your CI can be clicking the CI env variables, you can verify your PR number from here if needed
+7.Details for your CI can be clicking the CI env variables, you can verify your PR number from here if needed
 ![image](https://user-images.githubusercontent.com/111106290/225873955-890ec6c6-b50b-43c6-9a01-a8a918bd4491.png)
 
 
-4. Mirrored Traffic is under Sessions Page, expand the session and click on view under Actions to see requests.
+8. Mirrored Traffic is under Sessions Page, expand the session and click on view under Actions to see requests.
 ![Screenshot from 2023-03-17 15-05-36](https://user-images.githubusercontent.com/111106290/225867661-ae941912-e09a-416b-9906-daf5e802a720.png)
 
-5. You will not have permission to trigger tests from UI as you will only have guest access.
-6. Please go through our usage guides to know more https://docs.hypertest.co/user-guides/usage-guide
+9. You will not have permission to trigger tests from UI as you will only have guest access.
+10. Please go through our usage guides to know more https://docs.hypertest.co/user-guides/usage-guide
 
 # How to Mirror Traffic:
 We are capturing all traffic which is coming on http://hypertestco-main-sample-errors.demo-k8s.hypertest.co only.
