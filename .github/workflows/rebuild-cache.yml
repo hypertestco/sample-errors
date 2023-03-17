@@ -1,0 +1,43 @@
+name: Backup-cache-run-from-master-only
+on:
+  schedule:
+    - cron: '0 0 */6 * *' # Run at midnight every 6th day of month
+  workflow_dispatch:
+jobs:
+  rebuild-cache:
+    if: github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete existing cache
+        run: |
+          if gh --version; then
+            echo "gh cli is installed"
+          else
+            echo "gh cli is not installed"
+            echo "Installing gh cli"
+            type -p curl >/dev/null || sudo apt install curl -y
+            curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+            && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+            && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+            && sudo apt update \
+            && sudo apt install gh -y
+          fi
+          echo "============== apt-get update ===================="
+          sudo apt update > /dev/null
+          sudo apt install gh
+          echo "============== gh-actions install ===================="
+          gh extension install actions/gh-actions-cache || true
+          echo "============== Cache Delete ===================="
+          gh actions-cache ht-cli-cache --confirm || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cache node modules
+        id: cache-npm
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: 'ht-cli.tar.xz'
+          key: ht-cli-cache
+      - name: Download HyperTest Cli
+        run: wget -O ht-cli.tar.xz https://hypertest-binaries-1.s3.ap-south-1.amazonaws.com/ht-cli/ht-cli-latest.tar.xz -nv 
