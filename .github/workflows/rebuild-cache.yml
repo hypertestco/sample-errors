@@ -28,7 +28,7 @@ jobs:
           echo "============== gh-actions install ===================="
           gh extension install actions/gh-actions-cache || true
           echo "============== Cache Delete ===================="
-          gh actions-cache delete ht-cli-cache --confirm || true
+          gh-actions-cache delete ht-cli-cache --confirm || true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Cache node modules
