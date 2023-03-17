@@ -142,8 +142,11 @@ jobs:
         key: ht-cli-cache
         
     - name: Download HyperTest CLI
-      run: wget -O ht-cli.tar.xz https://hypertest-binaries-1.s3.ap-south-1.amazonaws.com/ht-cli/ht-cli-latest.tar.xz -nv && tar xvf ht-cli.tar.xz
-    
+#       run: wget -O ht-cli.tar.xz https://hypertest-binaries-1.s3.ap-south-1.amazonaws.com/ht-cli/ht-cli-latest.tar.xz -nv && tar xvf ht-cli.tar.xz
+      run: |
+        echo "Cached ht-cli"
+        tar xvf ht-cli.tar.xz
+        
     - name: Check if HyperTest can start a test run
       run: ./hypertest can-run-test --poll
 
