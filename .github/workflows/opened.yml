@@ -98,7 +98,7 @@ jobs:
           app_url="http://${{ env.APP_NAME }}.demo-k8s.hypertest.co/app/ping"
           retry_interval=10
           retry_count=0
-          max_retries=5
+          max_retries=6
 
           while [[ $retry_count -lt $max_retries ]]; do
             response=$(curl -s -o /dev/null -w "%{http_code}" "$app_url")
@@ -123,25 +123,7 @@ jobs:
       run: wget -O ht-cli.tar.xz https://hypertest-binaries-1.s3.ap-south-1.amazonaws.com/ht-cli/ht-cli-latest.tar.xz -nv && tar xvf ht-cli.tar.xz
     
     - name: Check if HyperTest can start a test run
-      run: |
-        retry_count=0
-        max_retries=5
-        retry_interval=10
-
-          while [[ $retry_count -lt $max_retries ]]; do
-            output=$(./hypertest can-run-test)
-            if echo "$output" | grep -q "{ canRunTest: true }"; then
-              echo "Hypertest can start a new test run"
-              exit 0
-            else
-              echo $output
-              echo "Waiting for HyperTest to finish running test. Retrying in $retry_interval seconds..."
-              retry_count=$((retry_count+1))
-              sleep 5
-            fi
-          done
-          echo "Seems like a test is already running in HyperTest, Wait for it to complete/terminate it and retrigger this pipeline"
-          exit 1
+      run: ./hypertest can-run-test --poll
 
     - name: Start a new test with HyperTest
       run: ./hypertest start-new-test -c http://${{ env.APP_NAME }}.demo-k8s.hypertest.co
