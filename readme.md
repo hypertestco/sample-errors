@@ -62,7 +62,7 @@ Please take note of below guidelines while forking the repository, creating new 
 ![image](https://user-images.githubusercontent.com/111106290/225873484-ef9faa9c-53b8-46fd-b735-546e64f3a749.png)
 
 
-7.Details for your CI can be clicking the CI env variables, you can verify your PR number from here if needed
+7.Details for your CI can be clicking on view more details in your test run , you can verify your PR number from here if needed
 ![image](https://user-images.githubusercontent.com/111106290/225873955-890ec6c6-b50b-43c6-9a01-a8a918bd4491.png)
 
 
