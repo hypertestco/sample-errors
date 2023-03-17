@@ -1,4 +1,4 @@
-name: rebuild-cache-run-from-master-only
+name: Rebuild HyperTest Cli binary Cache
 on:
   schedule:
     - cron: '0 0 */6 * *' # Run at midnight every 6th day of month
