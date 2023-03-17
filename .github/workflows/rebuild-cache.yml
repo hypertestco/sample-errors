@@ -10,25 +10,10 @@ jobs:
     steps:
       - name: Delete existing cache
         run: |
-          if gh --version; then
-            echo "gh cli is installed"
-          else
-            echo "gh cli is not installed"
-            echo "Installing gh cli"
-            type -p curl >/dev/null || sudo apt install curl -y
-            curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
-            && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
-            && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
-            && sudo apt update \
-            && sudo apt install gh -y
-          fi
-          echo "============== apt-get update ===================="
-          sudo apt update > /dev/null
-          sudo apt install gh
           echo "============== gh-actions install ===================="
-          gh extension install actions/gh-actions-cache || true
+          gh extension install actions/gh-actions-cache
           echo "============== Cache Delete ===================="
-          gh-actions-cache delete ht-cli-cache --confirm || true
+          gh actions-cache delete ht-cli-cache --confirm || true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Cache node modules
