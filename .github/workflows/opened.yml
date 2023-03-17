@@ -134,6 +134,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy
     steps:
+    - name: Cache HyperTest Cli Binary
+      id: cache-primes
+      uses: actions/cache@v3
+      with:
+        path: ht-cli.tar.xz
+        key: ht-cli-cache
+        
     - name: Download HyperTest CLI
       run: wget -O ht-cli.tar.xz https://hypertest-binaries-1.s3.ap-south-1.amazonaws.com/ht-cli/ht-cli-latest.tar.xz -nv && tar xvf ht-cli.tar.xz
     
