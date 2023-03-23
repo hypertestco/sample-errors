@@ -12,8 +12,8 @@ router.get('/performance/standard', async (req, res) => {
     data: {
       id: 1,
       type: 'Standard',
-      path: req.originalUrl,
-      headers: req.headers
+      path: req.headers,
+      headers: req.originalUrl
     }
   });
 });
@@ -25,7 +25,7 @@ router.get('/performance/delayed', async (req, res) => {
     success: true,
     msg: 'Delayed route response.',
     data: {
-      id: 2,
+      id: 4,
       type: 'Delayed',
       path: req.originalUrl,
       headers: req.headers
@@ -41,7 +41,7 @@ router.get('/performance/boosted', async (req, res) => {
     msg: 'Boosted route response.',
     data: {
       id: 3,
-      type: 'Boosted',
+      type: 'Boosted.',
       path: req.originalUrl,
       headers: req.headers
     }

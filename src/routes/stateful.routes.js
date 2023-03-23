@@ -132,7 +132,9 @@ router.put('/stateful/send-otp', validators.checkMobile, validationErrorHandler,
     return res.status(200).json({
       success: true,
       msg: 'OTP sent successfully. OTP will be expired after 5 minutes.',
-      data: { otp, mobile, type: otpType }
+      data: {
+        otp, mobile, type: otpType, sentVia: 'email'
+      }
     });
   } catch (err) {
     console.log(err);
@@ -152,14 +154,14 @@ router.put('/stateful/verify-otp', validators.verifyOTP, validationErrorHandler,
       return res.status(404).json({
         success: false,
         msg: 'User not found with us.',
-        data: {}
+        data: { userId: null }
       });
     }
     if (user.otpExpiryInSeconds < 0) {
       return res.status(400).json({
         success: false,
         msg: 'OTP has been expired, Please retry sending otp again.',
-        data: {}
+        data: { otpExpired: true }
       });
     }
     if (reqData.otp !== Number(user.otp)) {
@@ -174,7 +176,7 @@ router.put('/stateful/verify-otp', validators.verifyOTP, validationErrorHandler,
     return res.status(200).json({
       success: true,
       msg: 'OTP verification successful.',
-      data: { authorization: sessionId }
+      data: { id: user.id, authorization: sessionId }
     });
   } catch (err) {
     console.log(err);

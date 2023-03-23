@@ -17,7 +17,7 @@ const dummyUsersList = [
     name: 'Edward Snowden',
     email: 'Ed_Snowden@lavabit.com',
     rating: 4.6,
-    credit: 96,
+    credit: 69,
     currentTimpestamp: Date.now()
   },
   {
